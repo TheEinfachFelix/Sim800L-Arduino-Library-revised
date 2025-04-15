@@ -201,6 +201,18 @@ uint8_t Sim800L::getFunctionalityMode()
     return _functionalityMode;
 }
 
+String Sim800L::ping()
+{
+    String command;
+    command  = "AT";
+    command += "\r";
+
+    // Can take up to 5 seconds
+
+    this->SoftwareSerial::print(command);
+    return (_readSerial(5000));
+}
+
 bool Sim800L::setPIN(String pin)
 {
     String command;
@@ -480,7 +492,7 @@ bool Sim800L::sendSms(char* number,char* text)
     this->SoftwareSerial::print((char)26);
     _buffer=_readSerial(60000);
     // Serial.println(_buffer);
-    //expect CMGS:xxx   , where xxx is a number,for the sending sms.
+    //expect CMGS:xxx   , where xxx is a number,for the sending CPIN.
     if ((_buffer.indexOf("ER")) != -1) {
         return true;
     } else if ((_buffer.indexOf("CMGS")) != -1) {
@@ -613,6 +625,12 @@ void Sim800L::RTCtime(int *day,int *month, int *year,int *hour,int *minute, int 
     }
 }
 
+void Sim800L::checkStatus()
+{
+    this->SoftwareSerial::print(F("AT+CPIN?\r\n"));
+    _readSerial();
+}
+
 //Get the time  of the base of GSM
 String Sim800L::dateNet()
 {
@@ -707,6 +725,11 @@ String Sim800L::_readSerial()
         }
     }
 
+    if (this->Debug)
+    {
+        Serial.println("<Sim800L Debug Recieved: " + str+ ">");
+    }
+
     return str;
 
 }
@@ -730,7 +753,10 @@ String Sim800L::_readSerial(uint32_t timeout)
             str += (char) this->SoftwareSerial::read();
         }
     }
-
+    if (this->Debug)
+    {
+        Serial.println("<Sim800L Debug Recieved: " + str+ ">");
+    }
     return str;
 
 }

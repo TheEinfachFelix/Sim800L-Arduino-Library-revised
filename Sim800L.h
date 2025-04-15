@@ -97,6 +97,8 @@ public:
     uint8_t RESET_PIN;
     uint8_t LED_PIN;
     bool	LED_FLAG;
+    bool Debug;
+    void checkStatus();
 
     Sim800L(void);
     Sim800L(uint8_t rx, uint8_t tx);
@@ -107,6 +109,7 @@ public:
     void begin(uint32_t baud);
     void reset();
 
+    String ping();
     bool setSleepMode(bool state);
     bool getSleepMode();
     bool setFunctionalityMode(uint8_t fun);
