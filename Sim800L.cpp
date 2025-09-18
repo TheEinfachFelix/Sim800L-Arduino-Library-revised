@@ -216,13 +216,13 @@ String Sim800L::ping()
 bool Sim800L::setPIN(String pin)
 {
     String command;
-    command  = "AT+CPIN=";
+    command  = "AT+CPIN=\"";
     command += pin;
-    command += "\r";
+    command += "\"";
 
     // Can take up to 5 seconds
 
-    this->SoftwareSerial::print(command);
+    this->SoftwareSerial::println(command);
 
     if ( (_readSerial(5000).indexOf("ER")) == -1)
     {
@@ -373,6 +373,21 @@ void Sim800L::setPhoneFunctionality()
     <rst> 1 Reset the MT before setting it to <fun> power level.
     */
     this->SoftwareSerial::print (F("AT+CFUN=1\r\n"));
+}
+
+String Sim800L::getRegistrionStatus()
+{
+    this->SoftwareSerial::print (F("AT+CGREG\r\n"));
+    return(_readSerial());
+}
+
+
+String Sim800L::setDebugMode(bool state)
+{
+    Debug = state;
+    if (!Debug) this->SoftwareSerial::print (F("AT+CMEE=1\r\n"));
+    else this->SoftwareSerial::print (F("AT+CMEE=2\r\n"));
+    return(_readSerial());
 }
 
 
@@ -625,10 +640,10 @@ void Sim800L::RTCtime(int *day,int *month, int *year,int *hour,int *minute, int 
     }
 }
 
-void Sim800L::checkStatus()
+String Sim800L::checkStatus()
 {
     this->SoftwareSerial::print(F("AT+CPIN?\r\n"));
-    _readSerial();
+    return _readSerial();
 }
 
 //Get the time  of the base of GSM

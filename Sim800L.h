@@ -86,7 +86,7 @@ private:
     String _locationCode;
     String _longitude;
     String _latitude;
-
+    bool Debug;
     String _readSerial();
     String _readSerial(uint32_t timeout);
 
@@ -97,8 +97,7 @@ public:
     uint8_t RESET_PIN;
     uint8_t LED_PIN;
     bool	LED_FLAG;
-    bool Debug;
-    void checkStatus();
+    String checkStatus();
 
     Sim800L(void);
     Sim800L(uint8_t rx, uint8_t tx);
@@ -120,6 +119,8 @@ public:
 
     String getOperatorsList();
     String getOperator();
+    String getRegistrionStatus();
+    String setDebugMode(bool state);
 
     bool calculateLocation();
     String getLocationCode();
